@@ -1,7 +1,53 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Github, Linkedin, Mail, ExternalLink, FileText } from 'lucide-react';
+
+// ── GitHub Config ─────────────────────────────────────────────────────────────
+const GITHUB_USERNAME = 'Jathin4';
+
+// Custom metadata per repo (key = exact GitHub repo name)
+// ✅ Add a new entry here whenever you want custom descriptions/tags for a new repo
+const REPO_META = {
+  'Enterprise-knowledge-agent': {
+    description: 'A production-ready multi-agent RAG system with specialized AI agents for retrieval and reasoning. Integrates Ollama (Llama 3.2) and Qdrant for semantic search with advanced intelligence services.',
+    tags: ['Python', 'RAG', 'Ollama', 'Qdrant'],
+  },
+  'customer-churn-prediction': {
+    description: 'End-to-end machine learning project for predicting telecom customer churn using advanced classification algorithms and feature engineering.',
+    tags: ['Python', 'ML', 'Scikit-learn'],
+  },
+  'AI-Enhanced-IT-Helpdesk-with-Semantic-Retrieval-and-Query-Refinement': {
+    description: 'AI-powered IT helpdesk system using semantic search and query refinement for intelligent customer support automation.',
+    tags: ['Python', 'NLP', 'Semantic Search'],
+  },
+  'DocuSearch-AI-Semantic-PDF-Search-with-Visual-and-Tabular-Insights': {
+    description: 'Intelligent PDF search system with visual and tabular insights extraction using NLP and computer vision.',
+    tags: ['Python', 'NLP', 'CV'],
+  },
+  'Hybrid-Chunking-and-Vector-Search-for-LLM-Based-Structured-Data-QA-Systems': {
+    description: 'Hybrid chunking strategies and vector search optimization for LLM-based QA systems on structured data.',
+    tags: ['Python', 'LLM', 'RAG'],
+  },
+  'Personalized-Quiz-Developer': {
+    description: 'AI-powered quiz generation system creating personalized assessments based on user preferences and learning objectives.',
+    tags: ['Python', 'NLP', 'AI'],
+  },
+  'Fitness-Tracker': {
+    description: 'Comprehensive fitness tracking application monitoring workouts, nutrition, and health metrics with analytics.',
+    tags: ['Python', 'Analytics'],
+  },
+  'Diet-Recommendation-system': {
+    description: 'ML-based diet recommendation system providing personalized nutrition plans based on health goals.',
+    tags: ['Python', 'ML'],
+  },
+};
+
+// Helper: "my-repo-name" → "My Repo Name"
+function formatRepoName(name) {
+  return name.replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+// ── End GitHub Config ─────────────────────────────────────────────────────────
 
 export default function Portfolio() {
   const [formData, setFormData] = useState({
@@ -11,6 +57,47 @@ export default function Portfolio() {
   });
   const [status, setStatus] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Dynamic projects state
+  const [projects, setProjects] = useState([]);
+  const [projectsLoading, setProjectsLoading] = useState(true);
+  const [projectsError, setProjectsError] = useState(false);
+
+  // Fetch all public repos from GitHub on mount
+  useEffect(() => {
+    async function fetchProjects() {
+      try {
+        const res = await fetch(
+          `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=30&type=public`
+        );
+        if (!res.ok) throw new Error('GitHub API error');
+        const repos = await res.json();
+
+        const filtered = repos
+          .filter(r => !r.fork && r.name !== GITHUB_USERNAME)
+          .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+          .map(r => {
+            const meta = REPO_META[r.name] || {};
+            return {
+              name: r.name,
+              title: formatRepoName(r.name),
+              description: meta.description || r.description || 'No description provided.',
+              tags: meta.tags || (r.language ? [r.language] : []),
+              github: r.html_url,
+              demo: r.homepage || null,
+            };
+          });
+
+        setProjects(filtered);
+      } catch (e) {
+        console.error(e);
+        setProjectsError(true);
+      } finally {
+        setProjectsLoading(false);
+      }
+    }
+    fetchProjects();
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -268,164 +355,81 @@ export default function Portfolio() {
         </div>
       </section>
 
-      {/* Projects Section */}
+      {/* Projects Section — Dynamic from GitHub */}
       <section id="projects" className="py-32 px-6">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl font-serif mb-16">Projects</h2>
-          <div className="space-y-16">
-            
-            {/* Project 1 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">Enterprise Knowledge Agent</h3>
-                <a href="https://github.com/Jathin4/Enterprise-knowledge-agent" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                A production-ready multi-agent RAG system with specialized AI agents for retrieval and reasoning. Integrates Ollama (Llama 3.2) and Qdrant for semantic search with advanced intelligence services.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">RAG</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">Ollama</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">Qdrant</span>
-              </div>
-            </div>
 
-            {/* Project 2 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">Customer Churn Prediction</h3>
-                <a href="https://github.com/Jathin4/customer-churn-prediction" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                End-to-end machine learning project for predicting telecom customer churn using advanced classification algorithms and feature engineering.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">ML</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">Scikit-learn</span>
-              </div>
+          {/* Loading state */}
+          {projectsLoading && (
+            <div className="flex items-center justify-center py-20 text-gray-400">
+              <svg className="animate-spin h-6 w-6 mr-3" viewBox="0 0 24 24" fill="none">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+              </svg>
+              <span className="text-sm tracking-wide">Loading projects from GitHub...</span>
             </div>
+          )}
 
-            {/* Project 3 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">AI-Enhanced IT Helpdesk</h3>
-                <a href="https://github.com/Jathin4/AI-Enhanced-IT-Helpdesk-with-Semantic-Retrieval-and-Query-Refinement" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                AI-powered IT helpdesk system using semantic search and query refinement for intelligent customer support automation.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">NLP</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">Semantic Search</span>
-              </div>
+          {/* Error state */}
+          {projectsError && !projectsLoading && (
+            <div className="text-center py-20 text-gray-500">
+              <p className="mb-4">Could not load projects.</p>
+              <a
+                href={`https://github.com/${GITHUB_USERNAME}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 text-gray-700 hover:text-black transition"
+              >
+                <Github size={20} />
+                View all projects on GitHub
+              </a>
             </div>
+          )}
 
-            {/* Project 4 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">DocuSearch AI</h3>
-                <a href="https://github.com/Jathin4/DocuSearch-AI-Semantic-PDF-Search-with-Visual-and-Tabular-Insights" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                Intelligent PDF search system with visual and tabular insights extraction using NLP and computer vision.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">NLP</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">CV</span>
-              </div>
+          {/* Dynamic project cards — same style as original */}
+          {!projectsLoading && !projectsError && (
+            <div className="space-y-16">
+              {projects.map((project) => (
+                <div key={project.name} className="border-t border-gray-200 pt-8">
+                  <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
+                    <h3 className="text-3xl font-serif">{project.title}</h3>
+                    <div className="flex items-center gap-4">
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-gray-600 hover:text-black transition"
+                      >
+                        <Github size={20} />
+                        View Code
+                      </a>
+                      {project.demo && (
+                        <a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-gray-600 hover:text-black transition"
+                        >
+                          <ExternalLink size={20} />
+                          Live Demo
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-gray-600 mb-4 leading-relaxed">{project.description}</p>
+                  {project.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span key={tag} className="px-3 py-1 bg-gray-100 text-sm">{tag}</span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
+          )}
 
-            {/* Project 5 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">Hybrid Chunking & Vector Search</h3>
-                <a href="https://github.com/Jathin4/Hybrid-Chunking-and-Vector-Search-for-LLM-Based-Structured-Data-QA-Systems" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                Hybrid chunking strategies and vector search optimization for LLM-based QA systems on structured data.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">LLM</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">RAG</span>
-              </div>
-            </div>
-
-            {/* Project 6 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">Personalized Quiz Developer</h3>
-                <a href="https://github.com/Jathin4/Personalized-Quiz-Developer" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                AI-powered quiz generation system creating personalized assessments based on user preferences and learning objectives.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">NLP</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">AI</span>
-              </div>
-            </div>
-
-            {/* Project 7 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">Fitness Tracker</h3>
-                <a href="https://github.com/Jathin4/Fitness-Tracker" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                Comprehensive fitness tracking application monitoring workouts, nutrition, and health metrics with analytics.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">Analytics</span>
-              </div>
-            </div>
-
-            {/* Project 8 */}
-            <div className="border-t border-gray-200 pt-8">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-4">
-                <h3 className="text-3xl font-serif">Diet Recommendation System</h3>
-                <a href="https://github.com/Jathin4/Diet-Recommendation-system" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-600 hover:text-black transition">
-                  <Github size={20} />
-                  View Code
-                </a>
-              </div>
-              <p className="text-gray-600 mb-4 leading-relaxed">
-                ML-based diet recommendation system providing personalized nutrition plans based on health goals.
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <span className="px-3 py-1 bg-gray-100 text-sm">Python</span>
-                <span className="px-3 py-1 bg-gray-100 text-sm">ML</span>
-              </div>
-            </div>
-
-          </div>
         </div>
       </section>
 
