@@ -76,20 +76,14 @@ Vercel automatically redeploys on push!
 
 **Steps:**
 
-1. **Build Your Site**
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy**
+1. **Deploy**
    - Go to [netlify.com](https://netlify.com)
-   - Drag `.next` folder to Netlify
-   - Or connect GitHub repo
+   - Connect your GitHub repo (dragging the `.next` folder does not work for Next.js)
+   - Netlify auto-detects Next.js and installs its Next.js runtime
 
-3. **Configure Build Settings**
+2. **Build Settings** (auto-filled)
    - Build command: `npm run build`
-   - Publish directory: `.next`
-   - Node version: 18
+   - Node version: 18+
 
 **Custom Domain:**
 - Settings → Domain Management → Add custom domain
