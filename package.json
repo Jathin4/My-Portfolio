@@ -1,7 +1,7 @@
 {
   "name": "ai-ml-portfolio",
   "version": "1.0.0",
-  "description": "Professional portfolio website for AI/ML Developer",
+  "description": "Professional portfolio website for AI Full-Stack Developer",
   "private": true,
   "scripts": {
     "dev": "next dev",

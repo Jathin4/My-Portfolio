@@ -9,19 +9,19 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: 'Gangi Jathin - AI/ML Developer Portfolio',
-  description: 'Professional portfolio of Gangi Jathin, an AI/ML developer specializing in machine learning, deep learning, and data science. Explore projects, skills, and experience.',
-  keywords: 'AI, Machine Learning, Deep Learning, Data Science, Python, TensorFlow, PyTorch, Portfolio',
+  title: 'Gangi Jathin - AI Full-Stack Developer Portfolio',
+  description: 'Portfolio of Gangi Jathin, an AI full-stack developer building production web apps with React, FastAPI and PostgreSQL, and AI systems on top of them: RAG with citations, LangGraph agents and explainable ML.',
+  keywords: 'AI, Full-Stack, React, FastAPI, PostgreSQL, RAG, LangGraph, AI Agents, Machine Learning, Python, Portfolio',
   authors: [{ name: 'Gangi Jathin' }],
   openGraph: {
-    title: 'Gangi Jathin - AI/ML Developer',
-    description: 'Crafting intelligent solutions through machine learning and artificial intelligence',
+    title: 'Gangi Jathin - AI Full-Stack Developer',
+    description: 'Production web apps with React, FastAPI and PostgreSQL, and the AI systems on top of them.',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Gangi Jathin - AI/ML Developer',
-    description: 'Crafting intelligent solutions through machine learning and artificial intelligence',
+    title: 'Gangi Jathin - AI Full-Stack Developer',
+    description: 'Production web apps with React, FastAPI and PostgreSQL, and the AI systems on top of them.',
   },
 };
 

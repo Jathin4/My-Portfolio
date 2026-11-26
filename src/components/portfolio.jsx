@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import {
   Github, Linkedin, Mail, ExternalLink, Download, ArrowDown, Send, Code2,
   Brain, Cpu, Database, Sparkles, Bot, Network, LineChart, Terminal, Lightbulb,
-  Home, User, Briefcase, GraduationCap, Award, MessageSquare, ScanEye,
+  Home, User, Briefcase, GraduationCap, Award, MessageSquare, ScanEye, Globe,
 } from 'lucide-react';
 
 // ── GitHub Config ─────────────────────────────────────────────────────────────
@@ -15,20 +15,55 @@ const GITHUB_USERNAME = 'Jathin4';
 // ✅ Add a new entry here whenever you want a custom title/description/tags for a repo.
 //    Optional `image: '/projects/name.png'` (file in public/projects) replaces the card's icon header.
 const REPO_META = {
+  'Ai-claims-platform': {
+    title: 'AI Claims Platform',
+    description: 'Full-stack claims review platform (React, FastAPI, PostgreSQL + pgvector): a calibrated gradient-boosting model ranks 30K+ claims (PR-AUC 2.5× random) with SHAP explanations, and LangGraph agents check each claim against its policy PDF with page citations. 100% correct policy checks and 81% of AI findings correct on a frozen held-out set; 117 tests in CI.',
+    tags: ['Python', 'Agents', 'RAG', 'ML', 'LangGraph'],
+  },
+  'claims-intelligence': {
+    title: 'AI Claims Intelligence',
+    description: 'Claim triage under a fixed review budget: a model predicts which claims need manual review, an anomaly detector flags unusual ones, every score is explained, and bounded LLM agents assemble investigation reports with code-checked numbers.',
+    tags: ['Python', 'ML', 'Agents', 'LLM'],
+  },
+  'enterprise-knowledge-assistant': {
+    title: 'Enterprise Knowledge Assistant',
+    description: 'Private, fully local assistant that answers from company documents with checkable citations and refuses when the evidence is missing. Permission-aware collections, multi-agent gap reports with human approval, and benchmarked answer quality.',
+    tags: ['Python', 'RAG', 'Agents', 'LLM'],
+  },
   'Agentic-AI': {
     title: 'Agentic RCM Copilot',
     description: 'Multi-agent AI for medical billing: a supervisor routes requests to a claims investigator (plan → tool calls → self-critique) or a data analyst, grounded by pgvector semantic search, with logging and an automated eval suite.',
     tags: ['Python', 'Agents', 'RAG', 'LLM'],
   },
-  'Enterprise-knowledge-agent': {
-    title: 'Enterprise Knowledge Agent',
-    description: 'Production-grade multi-agent RAG system on Llama 3.2 (Ollama) and Qdrant, with FastAPI, PostgreSQL, Redis, MinIO, n8n automation and Prometheus + Grafana monitoring, all in a Docker-based architecture.',
-    tags: ['Python', 'RAG', 'Agents', 'Qdrant'],
-  },
   'customer-churn-prediction': {
     title: 'Customer Churn Prediction',
     description: 'End-to-end ML pipeline predicting telecom churn with 84.72% ROC-AUC (XGBoost), 20+ engineered features, K-Means customer segmentation and an interactive Streamlit dashboard.',
     tags: ['Python', 'ML', 'XGBoost'],
+  },
+  'Neighbourhood-Backend': {
+    title: 'Trusted Neighbourhood Network',
+    description: 'API for a neighbourhood platform: community notices plus a trusted home-services marketplace. FastAPI + asyncpg with all business logic in PL/pgSQL, OTP login with JWT refresh rotation, and swappable payment/SMS adapters. Flutter app in a separate repo.',
+    tags: ['Python', 'FastAPI', 'PostgreSQL', 'Web'],
+  },
+  'clinic-managment-frontend': {
+    title: 'ClinicOS',
+    description: 'Multi-tenant clinic management platform built at ByteQode, live in 4 clinics: patients, appointments, consultations with ICD-10 diagnoses, prescriptions, pharmacy, billing and inventory. 84 FastAPI routes, each with an explicit permission rule; a database per organisation.',
+    tags: ['React', 'FastAPI', 'Web'],
+  },
+  'mendly-website-frontend': {
+    title: 'Mendly',
+    description: 'Practice workspace for clinicians: clients, calendar, notes, forms, worksheets, chat and mail, plus a client portal for booking and filling forms. React frontend with a FastAPI backend.',
+    tags: ['React', 'FastAPI', 'Web'],
+  },
+  'TRR-CLINIC': {
+    title: 'Dr. Rama Reddy Clinics Website',
+    description: 'Website for a specialist psychiatry and ENT outpatient clinic: service pages, gallery and patient testimonials. Deployed on Cloudflare.',
+    tags: ['HTML', 'CSS', 'Web'],
+  },
+  'St.-Thomos-S.P.G-High-School': {
+    title: 'St. Thomas S.P.G High School Website',
+    description: 'School website with about, programs, gallery, blog, reviews and contact pages.',
+    tags: ['HTML', 'CSS', 'Web'],
   },
   'AI-Enhanced-IT-Helpdesk-with-Semantic-Retrieval-and-Query-Refinement': {
     title: 'AI IT Helpdesk',
@@ -63,12 +98,12 @@ const REPO_META = {
 };
 
 // Only these tags become filter pills (in this order, when at least one project has them)
-const FILTER_TAGS = ['Agents', 'RAG', 'LLM', 'NLP', 'ML', 'CV'];
+const FILTER_TAGS = ['Agents', 'RAG', 'LLM', 'NLP', 'ML', 'CV', 'Web'];
 
 // Card header icon + label: first matching tag wins
 const TAG_ICONS = [
   ['Agents', Network], ['RAG', Database], ['LLM', Bot], ['NLP', MessageSquare],
-  ['CV', ScanEye], ['ML', Brain], ['Analytics', LineChart], ['AI', Sparkles],
+  ['CV', ScanEye], ['ML', Brain], ['Analytics', LineChart], ['AI', Sparkles], ['Web', Globe],
 ];
 function projectCategory(tags) {
   return TAG_ICONS.find(([t]) => tags.includes(t)) || [tags[0] || 'Project', Code2];
@@ -78,6 +113,8 @@ function projectCategory(tags) {
 const HIDDEN_REPOS = [
   'GreeksforGreeks', 'Leetcode', 'DSA', 'scholas-monitoring-report-bot',
   'site-check', 'Jathin-Gangi', 'Articles', 'My-Portfolio',
+  // other half of a project already shown as one card
+  'mendly-backend', 'clinic-managment-api', 'clinic-app', 'Neighbourhood-frontend',
 ];
 
 // Helper: "my-repo-name" → "My Repo Name"
@@ -102,19 +139,18 @@ const SOCIALS = [
 ];
 
 const STATS = [
-  { value: '2', label: 'Internships' },
-  { value: '95%', label: 'Vocalysis accuracy' },
-  { value: '5,000+', label: 'Documents indexed' },
-  { value: '13', label: 'Certifications' },
+  { value: '1+', label: 'Years building production apps' },
+  { value: '4', label: 'Clinics running ClinicOS' },
+  { value: '84', label: 'REST API endpoints shipped' },
+  { value: '81%', label: 'AI findings correct on held-out claims' },
 ];
 
 const EDUCATION = [
   {
-    title: 'B.Tech in Computer Science & Engineering (AI & ML)',
-    place: 'Vardhaman College of Engineering',
-    period: '2021 – 2025',
+    title: 'B.Tech in Computer Science',
+    place: 'Vardhaman College of Engineering, Hyderabad',
+    period: '2021 – 2025 · CGPA 7.6',
     points: [
-      'Specialized in Artificial Intelligence & Machine Learning',
       'Worked on GenAI, RAG systems, and ML-based applications',
       'Final Year Project: Thyroid Detection Framework Using Machine Learning',
     ],
@@ -134,15 +170,14 @@ const EDUCATION = [
 
 const EXPERIENCE = [
   {
-    role: 'AI Developer Intern',
-    company: 'Cittaa Healthcare Services Pvt. Ltd.',
-    period: '2025',
+    role: 'Full-Stack Developer',
+    company: 'ByteQode Digitals Pvt. Ltd.',
+    period: 'Feb 2026 – Present',
     points: [
-      <>Designed and developed <strong>Vocalysis</strong>, an AI-based voice analysis model to evaluate a user's daily activities and emotional state using 45–60 seconds of voice input.</>,
-      'Implemented speech processing and emotion analysis techniques to extract behavioral and sentiment features from user voice narratives.',
-      <>Built a scoring mechanism that generates mental well-being insights, achieving approximately <strong>95% prediction accuracy</strong>.</>,
-      'Optimized the end-to-end pipeline from audio ingestion to model inference, ensuring reliable and consistent performance.',
-      'Contributed to real-world healthcare AI applications, focusing on user experience, model accuracy, and practical deployment considerations.',
+      <>Did the system design and built complete modules for two company products: <strong>ClinicOS</strong>, a multi-tenant clinic management platform live in <strong>4 clinics</strong>, and <strong>Scholas</strong>, an app and website that digitalize how a school runs.</>,
+      <>Built <strong>84 REST API endpoints</strong> across 25 FastAPI modules and <strong>24 React screens</strong> for ClinicOS, covering patients, appointments, consultations, prescriptions and pharmacy, inventory, billing and staff attendance.</>,
+      'Designed the PostgreSQL schemas and multi-tenant data model (a database per organisation), with token-based authentication and deny-by-default role permissions on every endpoint, enforced by an automated test.',
+      'Deployed the backend on Render and the frontend on Vercel, and contributed to CI/CD workflows using GitHub Actions for automated testing and deployment.',
     ],
   },
   {
@@ -150,23 +185,28 @@ const EXPERIENCE = [
     company: 'Wipro',
     period: '2024',
     points: [
-      <>Developed LLM-based Retrieval-Augmented Generation (RAG) pipelines for document retrieval, improving query accuracy by <strong>30%</strong>.</>,
-      'Implemented hybrid semantic chunking strategies to enhance contextual understanding and reduce response latency.',
-      <>Built <strong>2 GenAI applications</strong> enabling fast and accurate knowledge search across <strong>5,000+ enterprise documents</strong>.</>,
-      'Integrated vector databases and embeddings to optimize similarity search and retrieval performance.',
-      'Presented AI solutions to cross-functional teams, contributing to increased internal adoption of GenAI tools.',
+      'Developed LLM-based RAG pipelines for document retrieval.',
+      <>Built <strong>2 GenAI apps</strong> using hybrid semantic chunking for faster knowledge search across <strong>5,000+ documents</strong>.</>,
+      'Presented solutions to cross-functional teams, enhancing internal AI adoption.',
     ],
   },
 ];
 
+const VOLUNTEERING = [
+  ['ISOC Hyderabad', '2024', 'DNS, UA, DNSSEC and DDCN workshops'],
+  ['HCSC Volunteer', '2025', 'Cybersecurity awareness with Hyderabad Police'],
+];
+
 const SKILLS = {
-  'Programming Languages': ['Python', 'SQL', 'JavaScript', 'TypeScript'],
-  'AI/ML & Data Science': ['TensorFlow', 'PyTorch', 'Scikit-learn', 'Keras', 'OpenCV', 'NLP', 'Computer Vision', 'RAG Systems', 'LLMs (Llama, GPT)'],
-  'Tools & Frameworks': ['Pandas', 'NumPy', 'Matplotlib', 'Seaborn', 'Jupyter', 'MongoDB', 'Ollama', 'Qdrant', 'Docker', 'Git'],
+  'Languages & Frontend': ['Python', 'JavaScript', 'TypeScript', 'SQL', 'Dart', 'React', 'Flutter'],
+  'Backend, Data & DevOps': ['FastAPI', 'PostgreSQL', 'pgvector', 'SQLAlchemy', 'Alembic', 'REST APIs', 'Git', 'GitHub Actions (CI/CD)', 'Docker', 'Render', 'Vercel'],
+  'AI/ML': ['GenAI', 'RAG', 'LangGraph', 'AI Agents', 'Ollama', 'FAISS', 'scikit-learn', 'SHAP', 'Machine Learning'],
+  'Tools & Soft Skills': ['Jupyter', 'Power BI', 'Excel', 'PowerPoint', 'Presentation Design', 'Communication', 'Research'],
 };
 
 const CERTIFICATIONS = [
   ['Oracle Cloud Infrastructure 2025 AI Foundations Associate', 'Oracle', 'November 2025'],
+  ['Azure Fundamentals', 'Microsoft', ''],
   ['Professional Development on GenAI', 'Vardhaman College of Engineering', 'September 2024'],
   ['Wipro Certified for Generative AI', 'Wipro', 'September 2024'],
   ['MongoDB and the Document Model', 'MongoDB', 'August 2024'],
@@ -264,7 +304,7 @@ const NeuralSphere = dynamic(() => import('./NeuralSphere'), {
   loading: () => <div className="w-full aspect-square max-w-lg" />,
 });
 
-const TYPED_ROLES = ['RAG pipelines', 'GenAI applications', 'ML models', 'voice AI'];
+const TYPED_ROLES = ['full-stack web apps', 'RAG pipelines', 'AI agents', 'ML models'];
 
 // Types each role, pauses, deletes it, moves to the next
 function Typewriter({ words }) {
@@ -421,17 +461,18 @@ export default function Portfolio() {
     async function fetchProjects() {
       try {
         const res = await fetch(
-          `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=30&type=public`
+          `https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100&type=public`
         );
         if (!res.ok) throw new Error('GitHub API error');
         const repos = await res.json();
 
         const filtered = repos
           .filter(r => !r.fork && r.name !== GITHUB_USERNAME && !HIDDEN_REPOS.includes(r.name))
-          // Described repos first, then most recently updated
-          .sort((a, b) =>
-            (!!(REPO_META[b.name] || b.description) - !!(REPO_META[a.name] || a.description)) ||
-            new Date(b.updated_at) - new Date(a.updated_at))
+          // Curated repos in REPO_META order, then described repos, then most recently updated
+          .sort((a, b) => {
+            const rank = r => { const i = Object.keys(REPO_META).indexOf(r.name); return i >= 0 ? i : 1000 - !!r.description; };
+            return (rank(a) - rank(b)) || new Date(b.updated_at) - new Date(a.updated_at);
+          })
           .map(r => {
             const meta = REPO_META[r.name] || {};
             return {
@@ -523,16 +564,16 @@ export default function Portfolio() {
         <div className="relative max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
           <div className="animate-slide-up">
             <p className="text-accent font-medium mb-4">Hi, I'm Gangi Jathin</p>
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.05] mb-6">
-              <span className="text-white">AI & ML</span><br />
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-6">
+              <span className="text-white">AI FULL-STACK</span><br />
               <span className="text-accent">DEVELOPER</span>
             </h1>
             <p className="text-lg md:text-xl font-semibold text-white mb-6 h-8" aria-label={`I build ${TYPED_ROLES.join(', ')}`}>
               <span aria-hidden="true">I build <Typewriter words={TYPED_ROLES} /></span>
             </p>
             <p className="text-gray-400 mb-10 max-w-md leading-relaxed">
-              Crafting intelligent solutions through machine learning and artificial intelligence.
-              Transforming data into actionable insights.
+              Production web apps with React, FastAPI and PostgreSQL, and the AI systems on top of them:
+              RAG with citations, LangGraph agents and explainable machine learning.
             </p>
             <div className="flex gap-4 flex-wrap">
               <a href="#contact" className="px-7 py-3 rounded-full bg-accent text-ink-950 text-sm font-semibold hover:bg-accent-dark transition">
@@ -570,13 +611,13 @@ export default function Portfolio() {
             <Heading white="About" teal="me" />
             <div className="space-y-5 leading-relaxed text-gray-400">
               <p>
-                I am a Computer Science Engineer specializing in Artificial Intelligence and Machine Learning, with strong academic and practical experience in building intelligent, data-driven systems. My work focuses on applying AI technologies to solve real-world problems efficiently and at scale.
+                I'm an AI Full-Stack Developer with 1+ years of experience building production web applications with React, FastAPI, and PostgreSQL, and AI systems on top of them: RAG pipelines with citations, LangGraph agents, and machine learning models with explanations.
               </p>
               <p>
-                I have hands-on experience in Generative AI, Retrieval-Augmented Generation (RAG), machine learning, and data analytics, along with foundational knowledge in natural language processing, computer vision, and predictive modeling gained through academic and industry projects.
+                I build the whole product, from database design, secure APIs, and the frontend to the model, its guardrails, and an honest evaluation on held-out data (e.g. 81% of AI findings correct on unseen claims, with every number verified in code).
               </p>
               <p>
-                I am committed to continuous learning and professional growth, and I actively explore emerging technologies to design solutions that are reliable, impactful, and aligned with real-world requirements.
+                I'm experienced with authentication and role-based access, CI/CD, and deployment, and I bring strong problem-solving, presentation, and communication skills. I'm also an active volunteer with ISOC and HCSC.
               </p>
             </div>
           </div>
@@ -608,6 +649,22 @@ export default function Portfolio() {
                     ))}
                   </ul>
                 )}
+              </div>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* Volunteering */}
+        <Reveal className="relative max-w-6xl mx-auto mt-16">
+          <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+            <User className="text-accent" /> Leadership &amp; Volunteering
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6">
+            {VOLUNTEERING.map(([org, year, what]) => (
+              <div key={org} className="rounded-xl bg-ink-800 border border-white/5 p-6">
+                <h4 className="text-lg font-semibold text-white mb-1">{org}</h4>
+                <p className="text-xs text-gray-500 mb-2">{year}</p>
+                <p className="text-sm text-gray-400">{what}</p>
               </div>
             ))}
           </div>
@@ -741,7 +798,7 @@ export default function Portfolio() {
               <TechCube />
             </div>
           </div>
-          <Reveal className="grid md:grid-cols-3 gap-6 mb-20">
+          <Reveal className="grid md:grid-cols-2 gap-6 mb-20">
             {Object.entries(SKILLS).map(([group, items]) => (
               <div key={group} className="rounded-xl bg-ink-800 border border-white/5 p-6">
                 <h3 className="text-white font-semibold mb-5 pb-3 border-b border-white/10">{group}</h3>
@@ -762,7 +819,7 @@ export default function Portfolio() {
               <div key={title} className="rounded-lg bg-ink-800 border border-white/5 border-l-2 border-l-accent p-5">
                 <h4 className="text-sm font-semibold text-white mb-2">{title}</h4>
                 <p className="text-xs text-accent mb-1">{issuer}</p>
-                <p className="text-xs text-gray-500">{date}</p>
+                {date && <p className="text-xs text-gray-500">{date}</p>}
               </div>
             ))}
           </Reveal>
