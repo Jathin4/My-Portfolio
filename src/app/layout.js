@@ -1,4 +1,5 @@
 import { Poppins } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/react';
 import './globals.css';
 
 const poppins = Poppins({
@@ -9,6 +10,7 @@ const poppins = Poppins({
 });
 
 export const metadata = {
+  metadataBase: new URL('https://gangijathin.vercel.app'),
   title: 'Gangi Jathin - AI Full-Stack Developer Portfolio',
   description: 'Portfolio of Gangi Jathin, an AI full-stack developer building production web apps with React, FastAPI and PostgreSQL, and AI systems on top of them: RAG with citations, LangGraph agents and explainable ML.',
   keywords: 'AI, Full-Stack, React, FastAPI, PostgreSQL, RAG, LangGraph, AI Agents, Machine Learning, Python, Portfolio',
@@ -28,7 +30,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className={`${poppins.variable} scroll-smooth`}>
-      <body className="antialiased bg-ink-950 text-white font-sans">{children}</body>
+      <body className="antialiased bg-ink-950 text-white font-sans">{children}<Analytics /></body>
     </html>
   );
 }

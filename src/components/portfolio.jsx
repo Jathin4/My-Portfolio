@@ -24,11 +24,13 @@ const REPO_META = {
     title: 'AI Claims Intelligence',
     description: 'Claim triage under a fixed review budget: a model predicts which claims need manual review, an anomaly detector flags unusual ones, every score is explained, and bounded LLM agents assemble investigation reports with code-checked numbers.',
     tags: ['Python', 'ML', 'Agents', 'LLM'],
+    image: '/projects/claims-intelligence.png',
   },
   'enterprise-knowledge-assistant': {
     title: 'Enterprise Knowledge Assistant',
     description: 'Private, fully local assistant that answers from company documents with checkable citations and refuses when the evidence is missing. Permission-aware collections, multi-agent gap reports with human approval, and benchmarked answer quality.',
     tags: ['Python', 'RAG', 'Agents', 'LLM'],
+    image: '/projects/enterprise-knowledge-assistant.png',
   },
   'Agentic-AI': {
     title: 'Agentic RCM Copilot',
@@ -49,11 +51,13 @@ const REPO_META = {
     title: 'ClinicOS',
     description: 'Multi-tenant clinic management platform built at ByteQode, live in 4 clinics: patients, appointments, consultations with ICD-10 diagnoses, prescriptions, pharmacy, billing and inventory. 84 FastAPI routes, each with an explicit permission rule; a database per organisation.',
     tags: ['React', 'FastAPI', 'Web'],
+    image: '/projects/clinicos.jpg',
   },
   'mendly-website-frontend': {
     title: 'Mendly',
     description: 'Practice workspace for clinicians: clients, calendar, notes, forms, worksheets, chat and mail, plus a client portal for booking and filling forms. React frontend with a FastAPI backend.',
     tags: ['React', 'FastAPI', 'Web'],
+    image: '/projects/mendly.jpg',
   },
   'TRR-CLINIC': {
     title: 'Dr. Rama Reddy Clinics Website',
@@ -80,21 +84,22 @@ const REPO_META = {
     description: 'Hybrid chunking strategies and vector search optimization for LLM-based QA systems on structured data.',
     tags: ['Python', 'LLM', 'RAG'],
   },
-  'Personalized-Quiz-Developer': {
-    title: 'Personalized Quiz Generator',
-    description: 'AI-powered quiz generation system creating personalized assessments based on user preferences and learning objectives.',
-    tags: ['Python', 'NLP', 'AI'],
-  },
-  'Fitness-Tracker': {
-    title: 'Fitness Tracker',
-    description: 'Comprehensive fitness tracking application monitoring workouts, nutrition, and health metrics with analytics.',
-    tags: ['Python', 'Analytics'],
-  },
-  'Diet-Recommendation-system': {
-    title: 'Diet Recommendation System',
-    description: 'ML-based diet recommendation system providing personalized nutrition plans based on health goals.',
-    tags: ['Python', 'ML'],
-  },
+};
+
+// Shown as a large spotlight above the grid instead of as a card
+const FEATURED_REPO = 'Ai-claims-platform';
+const FEATURED = {
+  image: '/projects/ai-claims-platform.jpg',
+  demo: 'https://jathin4.github.io/Ai-claims-platform/app/',
+  video: 'https://jathin4.github.io/Ai-claims-platform/#demo',
+  github: 'https://github.com/Jathin4/Ai-claims-platform',
+  metrics: [
+    ['30K+', 'claims ranked for review'],
+    ['100%', 'correct policy checks (held-out)'],
+    ['81%', 'AI findings correct (hand-graded)'],
+    ['117', 'automated tests in CI'],
+  ],
+  stack: ['React', 'FastAPI', 'PostgreSQL + pgvector', 'LangGraph', 'Ollama', 'SHAP', 'Docker'],
 };
 
 // Only these tags become filter pills (in this order, when at least one project has them)
@@ -115,6 +120,8 @@ const HIDDEN_REPOS = [
   'site-check', 'Jathin-Gangi', 'Articles', 'My-Portfolio',
   // other half of a project already shown as one card
   'mendly-backend', 'clinic-managment-api', 'clinic-app', 'Neighbourhood-frontend',
+  // older, weaker projects kept off the site
+  'Personalized-Quiz-Developer', 'Fitness-Tracker', 'Diet-Recommendation-system',
 ];
 
 // Helper: "my-repo-name" → "My Repo Name"
@@ -207,8 +214,10 @@ const SKILLS = {
 const CERTIFICATIONS = [
   ['Oracle Cloud Infrastructure 2025 AI Foundations Associate', 'Oracle', 'November 2025'],
   ['Azure Fundamentals', 'Microsoft', ''],
-  ['Professional Development on GenAI', 'Vardhaman College of Engineering', 'September 2024'],
   ['Wipro Certified for Generative AI', 'Wipro', 'September 2024'],
+  ['Advanced SQL', 'Kaggle', 'June 2023'],
+  // ↑ first TOP_CERTS shown as cards; the rest sit under "more"
+  ['Professional Development on GenAI', 'Vardhaman College of Engineering', 'September 2024'],
   ['MongoDB and the Document Model', 'MongoDB', 'August 2024'],
   ['Data Privacy Fundamentals', 'Cognitive Class', 'August 2024'],
   ['Google Project Management Professional Certificate', 'Coursera', 'August 2024'],
@@ -217,9 +226,9 @@ const CERTIFICATIONS = [
   ['How to Design and Deploy a Simple LAN and Wi-Fi Network', 'Internet Society Foundation', 'May 2024'],
   ['Business Analysis Basics', 'Simplilearn', 'May 2024'],
   ['Web Programming', 'Vardhaman College of Engineering', 'February 2024'],
-  ['Advanced SQL', 'Kaggle', 'June 2023'],
   ['RPA Developer Foundation', 'UiPath', 'January 2023'],
 ];
+const TOP_CERTS = 4;
 
 // Faint scattered icons, like the hand-drawn doodles in the background of the design
 const DOODLE_ICONS = [Brain, Cpu, Database, Sparkles, Bot, Network, LineChart, Terminal, Lightbulb, Code2];
@@ -396,7 +405,7 @@ function ProjectHeader({ project }) {
   if (project.image) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={project.image} alt={`${project.title} preview`} loading="lazy" className="aspect-[16/9] w-full object-cover" />
+      <img src={project.image} alt={`${project.title} preview`} loading="lazy" className="aspect-[16/9] w-full object-cover object-top" />
     );
   }
   const [label, Icon] = projectCategory(project.tags);
@@ -467,7 +476,7 @@ export default function Portfolio() {
         const repos = await res.json();
 
         const filtered = repos
-          .filter(r => !r.fork && r.name !== GITHUB_USERNAME && !HIDDEN_REPOS.includes(r.name))
+          .filter(r => !r.fork && r.name !== GITHUB_USERNAME && r.name !== FEATURED_REPO && !HIDDEN_REPOS.includes(r.name))
           // Curated repos in REPO_META order, then described repos, then most recently updated
           .sort((a, b) => {
             const rank = r => { const i = Object.keys(REPO_META).indexOf(r.name); return i >= 0 ? i : 1000 - !!r.description; };
@@ -563,6 +572,13 @@ export default function Portfolio() {
         <Doodles />
         <div className="relative max-w-6xl mx-auto w-full grid md:grid-cols-2 gap-12 items-center">
           <div className="animate-slide-up">
+            <span className="inline-flex items-center gap-2 px-3 py-1 mb-5 rounded-full bg-accent/10 border border-accent/30 text-accent text-xs font-medium">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-accent opacity-75 motion-safe:animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+              </span>
+              Open to opportunities
+            </span>
             <p className="text-accent font-medium mb-4">Hi, I'm Gangi Jathin</p>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] mb-6">
               <span className="text-white">AI FULL-STACK</span><br />
@@ -700,7 +716,46 @@ export default function Portfolio() {
       <section id="works" className="relative py-24 px-6 scroll-mt-16 overflow-hidden">
         <Doodles />
         <div className="relative max-w-6xl mx-auto">
-          <Heading white="My recent" teal="works" className="mb-6" />
+          <Heading white="My recent" teal="works" className="mb-10" />
+
+          {/* Featured project */}
+          <Reveal className="mb-16">
+            <div className="grid lg:grid-cols-5 rounded-2xl bg-ink-800 border border-accent/30 overflow-hidden shadow-[0_30px_80px_-30px_rgba(31,178,172,0.45)]">
+              <a href={FEATURED.demo} target="_blank" rel="noopener noreferrer" className="lg:col-span-3 flex items-center p-4 md:p-6 bg-ink-950 group">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={FEATURED.image} alt="AI Claims Platform dashboard" loading="lazy" className="w-full h-auto rounded-lg border border-white/10 shadow-2xl group-hover:scale-[1.02] transition-transform duration-300" />
+              </a>
+              <div className="lg:col-span-2 p-6 md:p-8 flex flex-col">
+                <span className="self-start px-3 py-1 mb-4 rounded-full bg-accent/10 text-accent text-xs font-semibold uppercase tracking-wider">Featured project</span>
+                <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{REPO_META[FEATURED_REPO].title}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed mb-6">{REPO_META[FEATURED_REPO].description}</p>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  {FEATURED.metrics.map(([value, label]) => (
+                    <div key={label} className="rounded-lg bg-ink-900/60 border border-white/5 p-3">
+                      <p className="text-xl font-bold text-accent">{value}</p>
+                      <p className="text-xs text-gray-400">{label}</p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {FEATURED.stack.map(s => (
+                    <span key={s} className="px-2.5 py-0.5 rounded-full bg-ink-700 text-gray-300 text-xs">{s}</span>
+                  ))}
+                </div>
+                <div className="mt-auto flex flex-wrap gap-3 text-sm">
+                  <a href={FEATURED.demo} target="_blank" rel="noopener noreferrer" className="px-5 py-2 rounded-full bg-accent text-ink-950 font-semibold hover:bg-accent-dark transition inline-flex items-center gap-2">
+                    <ExternalLink size={15} /> Live demo
+                  </a>
+                  <a href={FEATURED.video} target="_blank" rel="noopener noreferrer" className="px-5 py-2 rounded-full bg-ink-700 border border-white/10 text-white font-semibold hover:border-accent transition">
+                    Watch video
+                  </a>
+                  <a href={FEATURED.github} target="_blank" rel="noopener noreferrer" className="px-5 py-2 rounded-full bg-ink-700 border border-white/10 text-white font-semibold hover:border-accent transition inline-flex items-center gap-2">
+                    <Github size={15} /> Code
+                  </a>
+                </div>
+              </div>
+            </div>
+          </Reveal>
 
           {!projectsLoading && !projectsError && projects.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-10">
@@ -814,8 +869,8 @@ export default function Portfolio() {
           <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
             <Award className="text-accent" /> Professional Certifications
           </h3>
-          <Reveal className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {CERTIFICATIONS.map(([title, issuer, date]) => (
+          <Reveal className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {CERTIFICATIONS.slice(0, TOP_CERTS).map(([title, issuer, date]) => (
               <div key={title} className="rounded-lg bg-ink-800 border border-white/5 border-l-2 border-l-accent p-5">
                 <h4 className="text-sm font-semibold text-white mb-2">{title}</h4>
                 <p className="text-xs text-accent mb-1">{issuer}</p>
@@ -823,6 +878,20 @@ export default function Portfolio() {
               </div>
             ))}
           </Reveal>
+          <details className="mt-6 group">
+            <summary className="cursor-pointer list-none text-sm text-gray-400 hover:text-accent transition select-none">
+              <span className="group-open:hidden">+ {CERTIFICATIONS.length - TOP_CERTS} more certifications</span>
+              <span className="hidden group-open:inline">− Show fewer</span>
+            </summary>
+            <ul className="mt-4 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-sm">
+              {CERTIFICATIONS.slice(TOP_CERTS).map(([title, issuer, date]) => (
+                <li key={title} className="flex gap-3 text-gray-400">
+                  <span className="text-accent">•</span>
+                  <span><span className="text-gray-200">{title}</span> · {issuer}{date && `, ${date}`}</span>
+                </li>
+              ))}
+            </ul>
+          </details>
         </div>
       </section>
 
